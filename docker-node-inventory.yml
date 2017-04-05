@@ -1,3 +1,4 @@
+localhost ansible_connection=local
 # Kubernates Cluster inventory
 #docker1 ansible_ssh_host=10.107.69.201
 #docker2 ansible_ssh_host=10.107.69.202
