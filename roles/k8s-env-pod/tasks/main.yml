@@ -24,13 +24,13 @@
 #  register: intall_pod_net
 #  tags: install_podnet
 
-- name: Copy KubeConfig to local system (laptop) from master to access api locally
-  fetch:
-    src: /etc/kubernetes/admin.conf
-    dest: /tmp/
-    flat: yes
-  tags:
-    - fetch_kubeconfig
+#- name: Copy KubeConfig to local system (laptop) from master to access api locally
+#  fetch:
+#    src: /etc/kubernetes/admin.conf
+#    dest: /tmp/
+#    flat: yes
+#  tags:
+#    - fetch_kubeconfig
 
 - name: Check pods status
   shell: kubectl --kubeconfig ./admin.conf get pods --all-namespaces -o wide
