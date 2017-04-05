@@ -1,0 +1,32 @@
+---
+- name: Download GnuPG Key for secure communication
+  shell: curl -s https://packages.cloud.google.com/apt/doc/apt-key.gpg | apt-key add -
+
+- name: Specifying Kubernetes repository into sources list
+#  apt_repository: repo='deb http://apt.kubernetes.io/ kubernetes-xenial main' state=present update_cache=yes
+  template:
+    src: kubernetes-repo.j2
+    dest: /etc/apt/sources.list.d/kubernetes.list
+    backup: yes
+    owner: root
+    group: root
+    mode: 0644
+  tags:
+    - k8s-repo
+
+- name: Install Kubectl package
+  apt: name=kubectl state=present force=yes
+
+- name: Test nodes status from local machine
+  command: kubectl --kubeconfig /tmp/admin.conf get nodes
+  register: get_local_nodes
+- debug: var=get_local_nodes.stdout
+
+- name: Test pods status from local machine
+  command: kubectl --kubeconfig /tmp/admin.conf get pods --all-namespaces
+  register: get_local_pods
+- debug: var=get_local_pods.stdout
+
+# To access api locally
+# kubectl --kubeconfig ./admin.conf proxy
+#You can now access the API Server locally at http://localhost:8001/api/v1
