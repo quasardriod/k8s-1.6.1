@@ -1,0 +1,43 @@
+---
+
+- name: Update hosts file of Kubernates nodes
+  template:
+    src: hosts_file.j2
+    dest: /etc/hosts
+    backup: yes
+    owner: root
+    group: root
+    mode: 0644
+  tags:
+    - update_hosts_file
+
+# Ubuntu node Setup for Kubernates clsuster
+
+- name: Setup system hostname of Kubernates nodes
+  command: hostnamectl set-hostname {{ inventory_hostname }}
+  register: kubernates_hostname
+  tags:
+    - setup-hostname
+
+- name: Disable IPv6
+  command: sysctl -w net.ipv6.conf.all.disable_ipv6=1
+  
+
+#- name: Configure External Interface IP address
+#  template:
+#    src: ext_interface_ip.j2
+#    dest: /etc/network/interfaces
+#    backup: yes
+#    owner: root
+#    group: root
+#    mode: 0644
+#  register: knode_ip_conf
+#  tags:
+#    - knode_if_ip
+
+#- name: Reload network service
+#  service: name=networking state=restarted
+#  until: knode_ip_conf | success
+#  register: net_srv
+#  tags:
+#    - restart_net_srv

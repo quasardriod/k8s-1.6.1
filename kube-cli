@@ -1,0 +1,145 @@
+lxc@docker1:~$ sudo kubectl get nodes
+NAME      STATUS         AGE
+docker1   Ready,master   2d
+docker2   Ready          2d
+docker3   NotReady       2d
+
+
+lxc@docker1:~$ sudo kubectl get cs
+NAME                 STATUS    MESSAGE              ERROR
+scheduler            Healthy   ok                   
+controller-manager   Healthy   ok                   
+etcd-0               Healthy   {"health": "true"}   
+
+
+lxc@docker1:~$ sudo kubectl cluster-info
+Kubernetes master is running at http://localhost:8080
+KubeDNS is running at http://localhost:8080/api/v1/proxy/namespaces/kube-system/services/kube-dns
+
+To further debug and diagnose cluster problems, use 'kubectl cluster-info dump'.
+lxc@docker1:~$ 
+
+
+lxc@docker1:~$ sudo kubectl get rc,services
+NAME         CLUSTER-IP   EXTERNAL-IP   PORT(S)   AGE
+kubernetes   10.96.0.1    <none>        443/TCP   2d
+
+lxc@docker1:~$ sudo kubectl get svc
+NAME         CLUSTER-IP   EXTERNAL-IP   PORT(S)   AGE
+kubernetes   10.96.0.1    <none>        443/TCP   2d
+
+lxc@docker1:~$ sudo kubectl get rc   -- replication controllers
+No resources found.
+
+lxc@docker1:~$ kubectl version
+Client Version: version.Info{Major:"1", Minor:"5", GitVersion:"v1.5.2", GitCommit:"08e099554f3c31f6e6f07b448ab3ed78d0520507", GitTreeState:"clean", BuildDate:"2017-01-12T04:57:25Z", GoVersion:"go1.7.4", Compiler:"gc", Platform:"linux/amd64"}
+Server Version: version.Info{Major:"1", Minor:"5", GitVersion:"v1.5.5", GitCommit:"894ff23729bbc0055907dd3a496afb725396adda", GitTreeState:"clean", BuildDate:"2017-03-22T00:17:51Z", GoVersion:"go1.7.4", Compiler:"gc", Platform:"linux/amd64"}
+
+
+-- create a deployment
+lxc@docker1:~$ sudo kubectl run kubernetes-bootcamp --image=docker.io/jocatalin/kubernetes-bootcamp:v1 --port=8080
+deployment "kubernetes-bootcamp" created
+
+lxc@docker1:~$ sudo kubectl get deployments
+NAME                  DESIRED   CURRENT   UP-TO-DATE   AVAILABLE   AGE
+kubernetes-bootcamp   1         1         1            0           33s
+
+lxc@docker1:~$ kubectl config view
+apiVersion: v1
+clusters: []
+contexts: []
+current-context: ""
+kind: Config
+preferences: {}
+users: []
+lxc@docker1:~$ 
+
+lxc@docker1:~$ kubectl describe nodes docker2
+Name:			docker2
+Role:			
+Labels:			beta.kubernetes.io/arch=amd64
+			beta.kubernetes.io/os=linux
+			kubernetes.io/hostname=docker2
+Taints:			<none>
+CreationTimestamp:	Mon, 27 Mar 2017 00:52:27 +0530
+Phase:			
+Conditions:
+  Type			Status	LastHeartbeatTime			LastTransitionTime			Reason				Message
+  ----			------	-----------------			------------------			------				-------
+  OutOfDisk 		False 	Wed, 29 Mar 2017 21:15:34 +0530 	Tue, 28 Mar 2017 08:58:37 +0530 	KubeletHasSufficientDisk 	kubelet has sufficient disk space available
+  MemoryPressure 	False 	Wed, 29 Mar 2017 21:15:34 +0530 	Mon, 27 Mar 2017 00:52:34 +0530 	KubeletHasSufficientMemory 	kubelet has sufficient memory available
+  DiskPressure 		False 	Wed, 29 Mar 2017 21:15:34 +0530 	Mon, 27 Mar 2017 00:52:34 +0530 	KubeletHasNoDiskPressure 	kubelet has no disk pressure
+  Ready 		True 	Wed, 29 Mar 2017 21:15:34 +0530 	Wed, 29 Mar 2017 20:47:31 +0530 	KubeletReady 			kubelet is posting ready status. AppArmor enabled
+Addresses:		192.168.2.202,192.168.2.202,docker2
+Capacity:
+ alpha.kubernetes.io/nvidia-gpu:	0
+ cpu:					2
+ memory:				688252Ki
+ pods:					110
+Allocatable:
+ alpha.kubernetes.io/nvidia-gpu:	0
+ cpu:					2
+ memory:				688252Ki
+ pods:					110
+System Info:
+ Machine ID:			bc389351fb106e27ae6dd06658d4cdbe
+ System UUID:			1A4835F3-4826-473B-BF4B-C0F1CC48E983
+ Boot ID:			f1a62137-21f7-403a-9d22-c9a4172a7008
+ Kernel Version:		4.4.0-70-generic
+ OS Image:			Ubuntu 16.04.2 LTS
+ Operating System:		linux
+ Architecture:			amd64
+ Container Runtime Version:	docker://1.12.6
+ Kubelet Version:		v1.5.2
+ Kube-Proxy Version:		v1.5.2
+ExternalID:			docker2
+Non-terminated Pods:		(2 in total)
+  Namespace			Name				CPU Requests	CPU Limits	Memory Requests	Memory Limits
+  ---------			----				------------	----------	---------------	-------------
+  kube-system			kube-proxy-n01jg		0 (0%)		0 (0%)		0 (0%)		0 (0%)
+  kube-system			weave-net-1stl9			20m (1%)	0 (0%)		0 (0%)		0 (0%)
+Allocated resources:
+  (Total limits may be over 100 percent, i.e., overcommitted.
+  CPU Requests	CPU Limits	Memory Requests	Memory Limits
+  ------------	----------	---------------	-------------
+  20m (1%)	0 (0%)		0 (0%)		0 (0%)
+Events:
+  FirstSeen	LastSeen	Count	From			SubObjectPath	Type		Reason			Message
+  ---------	--------	-----	----			-------------	--------	------			-------
+  27m		27m		1	{kubelet docker2}			Normal		Starting		Starting kubelet.
+  27m		27m		1	{kubelet docker2}			Warning		ImageGCFailed		unable to find data for container /
+  27m		27m		2	{kubelet docker2}			Normal		NodeHasSufficientDisk	Node docker2 status is now: NodeHasSufficientDisk
+  27m		27m		2	{kubelet docker2}			Normal		NodeHasSufficientMemory	Node docker2 status is now: NodeHasSufficientMemory
+  27m		27m		2	{kubelet docker2}			Normal		NodeHasNoDiskPressure	Node docker2 status is now: NodeHasNoDiskPressure
+  27m		27m		1	{kubelet docker2}			Warning		Rebooted		Node docker2 has been rebooted, boot id: f1a62137-21f7-403a-9d22-c9a4172a7008
+  27m		27m		1	{kubelet docker2}			Normal		NodeNotReady		Node docker2 status is now: NodeNotReady
+  27m		27m		1	{kubelet docker2}			Normal		NodeReady		Node docker2 status is now: NodeReady
+  27m		27m		1	{kube-proxy docker2}			Normal		Starting		Starting kube-proxy.
+
+
+# sudo kubectl create -f pod.yaml
+lxc@docker1:~/kubernates$ cat pod.yaml 
+apiVersion: v1
+kind: Pod
+metadata:
+  name: busybox-sleep
+spec:
+  containers:
+  - name: nginx
+    image: nginx
+    args:
+    - sleep
+    - "1000000"
+lxc@docker1:~/kubernates$ 
+
+# kubectl describe pod busybox-sleep
+kubectl exec $POD_NAME env kubernetes-bootcamp-390780338-687hz
+  157  kubectl exec $POD_NAME env 
+  158  kubectl exec busybox-sleep env 
+  159  kubectl exec -ti  busybox-sleep env /bin/bash
+  160  kubectl get pods
+
+
+
+
+

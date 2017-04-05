@@ -1,0 +1,9 @@
+---
+# Join slave nodes to master
+- name: Run script to join slaves to cluster
+  script: /tmp/token.sh
+  register: slaves_join
+  tags:
+    - slaves_join_cluster
+
+- debug: var=slaves_join.stdout

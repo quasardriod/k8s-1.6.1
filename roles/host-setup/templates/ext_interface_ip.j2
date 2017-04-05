@@ -1,0 +1,16 @@
+# This file describes the network interfaces available on your system
+# and how to activate them. For more information, see interfaces(5).
+
+source /etc/network/interfaces.d/*
+
+# The loopback network interface
+auto lo
+iface lo inet loopback
+
+# The primary network interface
+auto {{k_node_interface_name}}
+iface {{k_node_interface_name}} inet static
+address {{ansible_ssh_host}}
+netmask {{k_node_netmask}}
+gateway {{k_node_gw}}
+dns-nameservers {{k_node_dns}}

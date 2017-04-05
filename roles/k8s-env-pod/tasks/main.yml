@@ -1,0 +1,34 @@
+---
+
+- name: Copy Kube environment setup file for non-root user
+  template:
+    src: kube-user-env.j2
+    dest: /tmp/kube-user-env.sh
+    backup: no
+    mode: 0755
+  tags:
+    - copy-env-file
+
+- name: Configure Kube environment and create pod network from non-root user
+  command: sh /tmp/kube-user-env.sh
+  tags:
+    - setup-env
+# Installing pod network add-on in master to communicate pods with each other
+
+#- name: Installing a pod network
+#  shell: "{{item}}"
+#  with_items:
+#    - export KUBECONFIG=$HOME/admin.conf
+#    - kubectl apply -f https://git.io/weave-kube-1.6
+#  ignore_errors: flase
+#  register: intall_pod_net
+#  tags: install_podnet
+
+- name: Check pods status
+  shell: kubectl --kubeconfig ./admin.conf get pods --all-namespaces -o wide
+  register: pod_ns_status
+  tags:
+    - pod-status
+- debug: var=pod_ns_status.stdout
+  tags:
+    - debug_data

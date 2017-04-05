@@ -1,0 +1,42 @@
+---
+# Installing Kubernetes using kubeadm tool
+
+- name: Download GnuPG Key for secure communication
+  shell: curl -s https://packages.cloud.google.com/apt/doc/apt-key.gpg | apt-key add -
+
+- name: Specifying Kubernetes repository into sources list
+#  apt_repository: repo='deb http://apt.kubernetes.io/ kubernetes-xenial main' state=present update_cache=yes
+  template:
+    src: kubernetes-repo.j2
+    dest: /etc/apt/sources.list.d/kubernetes.list
+    backup: yes
+    owner: root
+    group: root
+    mode: 0644
+  tags:
+    - k8s-repo
+
+- name: Update Cache
+  command: apt-get update
+  ignore_errors: false
+
+- name: Install required packages
+  apt: name="{{item}}" state=present
+  with_items:
+    - docker.io
+    - kubelet
+    - kubeadm
+    - kubectl
+    - kubernetes-cni
+  ignore_errors: flase
+#- name: Install Docker, Kubelet, Kubeadm, Kubectl and Kuberenetes-cni
+#  command: apt install "{{item}}" -y
+#  #apt: name={{ item }} state=latest update_cache=yes
+#  with_items:
+#    - docker.io
+#    - kubelet=1.5.2-00
+#    - kubeadm=1.5.2-00
+#    - kubectl=1.5.2.00
+#    - kubernetes-cni
+#  tags:
+#    - install_pkgs

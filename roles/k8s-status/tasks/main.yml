@@ -1,0 +1,24 @@
+---
+
+#Install Kubernetes dashboard
+
+#- name: Download yaml file
+#  command: kubectl create -f https://rawgit.com/kubernetes/dashboard/master/src/deploy/kubernetes-dashboard.yaml
+
+- name: Check cluster status along with dashboard
+  shell: kubectl --kubeconfig ./admin.conf get pods --all-namespaces -o wide
+  register: output_dashboard
+
+- debug: var=output_dashboard.stdout
+
+- name: List Kubernetes cluster services and nodes
+  command: kubectl --kubeconfig ./admin.conf get rc,services,node -o wide
+  register: list_nodes
+
+- debug: var=list_nodes.stdout
+
+- name: Check Cluster info
+  shell: kubectl --kubeconfig ./admin.conf cluster-info
+  register: cluster-info
+
+- debug: var=cluster-info.stdout

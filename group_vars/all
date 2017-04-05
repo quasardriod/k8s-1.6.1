@@ -1,0 +1,15 @@
+---
+# vars for Kubernates Cluster
+
+k_node_interface_name: eth0
+
+k_node1: 192.168.1.6
+k_node2: 192.168.1.7
+k_node3: 192.168.1.8
+k_node_netmask: 255.255.255.0
+k_node_gw: 192.168.1.1
+k_node_dns: 192.168.1.1
+
+knode1_hostname: docker1
+knode2_hostname: docker2
+knode3_hostname: docker3

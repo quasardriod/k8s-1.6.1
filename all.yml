@@ -1,0 +1,50 @@
+---
+# To pass sudo previliges set NOPASSWD: in /etc/sudoers file for the group or user that we will be used to login in hosts
+# Example: %sudo	ALL=(ALL) NOPASSWD: ALL
+# Note: make changes before changing hostname else sudo command may timeout through ansible because
+# if we change hostname first then sudo command takes time to execute. Reboot host in you changed hostname first
+
+# Setup hosts and k8s package installation
+- hosts: docker-cluster-servers
+  become: true
+  become_method: sudo
+  vars_files:
+    - group_vars/all
+  roles:
+    - host-setup
+    - k8s-common
+
+# Initialize master
+- hosts: master
+  become: true
+  become_method: sudo
+  vars_files:
+    - group_vars/all
+  roles:
+    - k8s-master
+
+# Setup env for non-root user and install pod network
+- hosts: master
+  become: false
+  vars_files:
+    - group_vars/all
+  roles:
+    - k8s-env-pod
+
+# Add slave nodes to cluster
+- hosts: nodes
+  become: true
+  become_method: sudo
+  vars_files:
+    - group_vars/all
+  roles:
+    - k8s-nodes
+
+# check clsuter status
+- hosts: master
+  become: true
+  become_method: sudo
+  vars_files:
+    - group_vars/all
+  roles:
+    - k8s-status
