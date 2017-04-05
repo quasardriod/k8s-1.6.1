@@ -2,7 +2,7 @@
 
 #Install Kubernetes dashboard
 - name: Install Dashboard
-  command: kubectl create -f https://rawgit.com/kubernetes/dashboard/master/src/deploy/kubernetes-dashboard.yaml
+  command: kubectl --kubeconfig ./admin.conf create -f https://rawgit.com/kubernetes/dashboard/master/src/deploy/kubernetes-dashboard.yaml
   ignore_errors: false
 
 - name: Check cluster status along with dashboard
