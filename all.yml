@@ -42,6 +42,20 @@
 
 # check clsuter status
 - hosts: master
+<<<<<<< HEAD
+=======
+  become: true
+  become_method: sudo
+  vars_files:
+    - group_vars/all
+  roles:
+    - k8s-status
+
+# Optional: Copy kubeconfig to local system and use kubectl locally. Make sure kubectl pkg install in local system.
+# if not, this talk would install it.
+
+- hosts: localhost
+>>>>>>> 80b2f6aa27a7f8ae3abbeafd1c9304c36b8328f3
   become: true
   become_method: sudo
   vars_files:
