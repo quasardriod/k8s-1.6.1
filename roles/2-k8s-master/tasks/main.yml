@@ -23,42 +23,19 @@
 - debug:
     var: show_token.stdout
 
-- name: Fetch public root user public key from master
+- name: Add "--skip-preflight-checks" to token
+  shell: sed -i 's/:6443/:6443 --skip-preflight-checks/' /tmp/token.sh
+  tags:
+    - set-token
+
+- name: Fetch token
   fetch:
-    src: /root/.ssh/id_rsa.pub
+    src: /tmp/token.sh
     dest: /tmp/
     flat: yes
-  register: fetch_pubkey
+  register: fetch_token
   tags:
-    - fetch_master-pubkey
-
-#- name: Run command from master to join slaves to cluster
-#  shell: for i in `cat /tmp/token.sh`;do ssh -o StrictHostKeyChecking=no root@"{{item}}" "$i --skip-preflight-checks";done
-#  with_items:
-#    - "{{kube_node1_ip}}"
-#    - "{{kube_node2_ip}}"
-#  ignore_errors: flase
-#  register: slaves_join
-#  tags:
-#    - join-slaves
-
-#- name: Run command from master to join slaves to cluster
-#  command: for i in `cat /tmp/token.sh`;do ssh -o StrictHostKeyChecking=no root@"{{item}}" "$i --skip-preflight-checks"
-#  with_items:
-#    - "{{kube_node1_ip}}"
-#    - "{{kube_node2_ip}}"
-#- name: Add "--skip-preflight-checks" to token
-#  shell: sed -i 's/"{{kube_master_ip}}":6443/"{{kube_master_ip}}":6443 --skip-preflight-checks/' /tmp/token.sh
-#  tags:
-#    - set-token
-#- name: Fetch token
-#  fetch:
-#    src: /tmp/token.sh
-#    dest: /tmp/
-#    flat: yes
-#  register: fetch_token
-#  tags:
-#    - fetch_registration_token
+    - fetch_registration_token
 
 # - name: Copy Kube environment setup file for non-root user
 #  template:
