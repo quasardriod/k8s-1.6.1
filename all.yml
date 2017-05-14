@@ -32,7 +32,7 @@
     - 3-k8s-env-pod
 
 # Add slave nodes to cluster
-- hosts: nodes
+- hosts: master
   become: true
   become_method: sudo
   vars_files:

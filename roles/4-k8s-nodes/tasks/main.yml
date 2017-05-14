@@ -1,9 +1,16 @@
 ---
 # Join slave nodes to master
-- name: Run script to join slaves to cluster
-  script: /tmp/token.sh
+- name: Run command from master to join slaves to cluster
+  command: for i in `cat /tmp/token.sh`;do ssh -o StrictHostKeyChecking=no root@"{{item}}" "$i --skip-preflight-checks"
+  with_items:
+    - "{{kube_node1_ip}}"
+    - "{{kube_node2_ip}}"
+  ignore_errors: flase
   register: slaves_join
-  tags:
-    - slaves_join_cluster
+#- name: Run script to join slaves to cluster
+#  script: /tmp/token.sh
+#  register: slaves_join
+#  tags:
+#    - slaves_join_cluster
 
 - debug: var=slaves_join.stdout

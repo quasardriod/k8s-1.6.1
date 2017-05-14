@@ -4,6 +4,7 @@
 - name: Initializing master
   shell: kubeadm init --skip-preflight-checks > /tmp/key_info
   register: master_init
+  ignore_errors: flase
   tags:
     - master_node_init
 
@@ -13,22 +14,27 @@
 - debug: var=key_info.stdout
 
 - name: Storing token
-  shell: cat /tmp/key_info |grep -i "kubeadm join" > /tmp/token.sh
+  command: cat /tmp/key_info |grep "kubeadm join --token" > /tmp/token.sh
   tags:
     - store_token
 
-- name: Add "--skip-preflight-checks" to token
-  shell: sed -i 's/{{k_node1}}:6443/{{k_node1}}:6443 --skip-preflight-checks/' /tmp/token.sh
-  tags:
-    - set-token
-- name: Fetch token
-  fetch:
-    src: /tmp/token.sh
-    dest: /tmp/
-    flat: yes
-  register: fetch_token
-  tags:
-    - fetch_registration_token
+#- name: Run command from master to join slaves to cluster
+#  command: for i in `cat /tmp/token.sh`;do ssh -o StrictHostKeyChecking=no root@"{{item}}" "$i --skip-preflight-checks"
+#  with_items:
+#    - "{{kube_node1_ip}}"
+#    - "{{kube_node2_ip}}"
+#- name: Add "--skip-preflight-checks" to token
+#  shell: sed -i 's/"{{kube_master_ip}}":6443/"{{kube_master_ip}}":6443 --skip-preflight-checks/' /tmp/token.sh
+#  tags:
+#    - set-token
+#- name: Fetch token
+#  fetch:
+#    src: /tmp/token.sh
+#    dest: /tmp/
+#    flat: yes
+#  register: fetch_token
+#  tags:
+#    - fetch_registration_token
 
 # - name: Copy Kube environment setup file for non-root user
 #  template:
