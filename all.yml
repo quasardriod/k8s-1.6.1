@@ -32,7 +32,7 @@
     - 3-k8s-env-pod
 
 # Copy master public key to slaves
-- hosts: nodes
+- hosts: localhost
   become: true
   become_method: sudo
   vars_files:
