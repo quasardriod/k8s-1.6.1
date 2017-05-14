@@ -1,0 +1,7 @@
+---
+
+- name: Copy master public key to slaves in authorized_keys
+  authorized_key:
+    user: root
+    state: present
+    key: /tmp/id_rsa.pub

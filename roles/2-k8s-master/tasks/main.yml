@@ -23,6 +23,25 @@
 - debug:
     var: show_token.stdout
 
+- name: Fetch public root user public key from master
+  fetch:
+    src: /root/.ssh/id_rsa.pub
+    dest: /tmp/
+    flat: yes
+  register: fetch_pubkey
+  tags:
+    - fetch_master-pubkey
+
+#- name: Run command from master to join slaves to cluster
+#  shell: for i in `cat /tmp/token.sh`;do ssh -o StrictHostKeyChecking=no root@"{{item}}" "$i --skip-preflight-checks";done
+#  with_items:
+#    - "{{kube_node1_ip}}"
+#    - "{{kube_node2_ip}}"
+#  ignore_errors: flase
+#  register: slaves_join
+#  tags:
+#    - join-slaves
+
 #- name: Run command from master to join slaves to cluster
 #  command: for i in `cat /tmp/token.sh`;do ssh -o StrictHostKeyChecking=no root@"{{item}}" "$i --skip-preflight-checks"
 #  with_items:
