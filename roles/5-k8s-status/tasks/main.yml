@@ -5,20 +5,29 @@
   command: kubectl --kubeconfig ./admin.conf create -f https://rawgit.com/kubernetes/dashboard/master/src/deploy/kubernetes-dashboard.yaml
   ignore_errors: false
 
+- name: simulate long running op, allow to run for 45 sec, fire and forget
+  command: /bin/sleep 15
+    async: 45
+    poll: 0
+
 - name: Check cluster status along with dashboard
   shell: kubectl --kubeconfig ./admin.conf get pods --all-namespaces -o wide
   register: output_dashboard
-
 - debug: var=output_dashboard.stdout
 
 - name: List Kubernetes cluster services and nodes
   command: kubectl --kubeconfig ./admin.conf get rc,services,node -o wide
   register: list_nodes
-
 - debug: var=list_nodes.stdout
 
 - name: Check Cluster info
   shell: kubectl --kubeconfig ./admin.conf cluster-info
   register: cluster_info
-
 - debug: var=cluster_info.stdout
+
+- name: List cluster nodes
+  shell: kubectl --kubeconfig ./admin.conf get nodes
+  register: list_nodes
+  notify:
+    - Delete created files
+- debug: var=list_nodes.stdout

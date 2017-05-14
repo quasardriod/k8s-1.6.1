@@ -1,0 +1,10 @@
+---
+
+- name: Delete created files
+  file:
+    path: /tmp/"{{item}}"
+    state: absent
+  with_items:
+    - key_info
+    - token.sh
+    - kube-user-env.sh
