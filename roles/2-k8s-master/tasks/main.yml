@@ -14,9 +14,14 @@
 - debug: var=key_info.stdout
 
 - name: Storing token
-  command: cat /tmp/key_info |grep "kubeadm join --token" > /tmp/token.sh
+  shell: cat /tmp/key_info |grep "kubeadm join --token" > /tmp/token.sh
   tags:
     - store_token
+- name: Show stored token
+  shell: cat /tmp/token.sh
+  register: show_token
+- debug:
+    var: show_token.stdout
 
 #- name: Run command from master to join slaves to cluster
 #  command: for i in `cat /tmp/token.sh`;do ssh -o StrictHostKeyChecking=no root@"{{item}}" "$i --skip-preflight-checks"
