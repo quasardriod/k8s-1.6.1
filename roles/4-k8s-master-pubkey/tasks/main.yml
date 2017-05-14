@@ -1,7 +1,13 @@
 ---
 
 - name: Copy master public key to slaves in authorized_keys
-  authorized_key:
-    user: root
-    state: present
-    key: /tmp/id_rsa.pub
+  command: ssh-copy-id -i /tmp/id_rsa.pub -o StrictHostKeyChecking=no root@"{{item}}"
+  with_items:
+    - "{{kube_node1_ip}}"
+    - "{{kube_node2_ip}}"
+  tags:
+    - master-pubkey-to-slaves
+#  authorized_key:
+#    user: root
+#    state: present
+#    key: /tmp/id_rsa.pub
