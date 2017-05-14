@@ -1,8 +1,6 @@
 ---
 # vars for Kubernates Cluster
 
-k_node_interface_name: eth0
-
 k_node1: 192.168.1.6
 k_node2: 192.168.1.7
 k_node3: 192.168.1.8

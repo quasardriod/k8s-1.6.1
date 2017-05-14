@@ -1,5 +1,5 @@
 ---
-# Installing Kubernetes using kubeadm tool
+# Installing Kubernetes using kubeadm tool in all nodes
 
 - name: Download GnuPG Key for secure communication
   shell: curl -s https://packages.cloud.google.com/apt/doc/apt-key.gpg | apt-key add -
