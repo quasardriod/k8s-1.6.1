@@ -32,13 +32,13 @@
     - 3-k8s-env-pod
 
 # Join slaves in cluster
-#- hosts: nodes
-#  become: true
-#  become_method: sudo
-#  vars_files:
-#    - group_vars/all
-#  roles:
-#    - 4-k8s-join-slaves
+- hosts: nodes
+  become: true
+  become_method: sudo
+  vars_files:
+    - group_vars/all
+  roles:
+    - 4-k8s-join-slaves
 
 # check clsuter status
 - hosts: master
