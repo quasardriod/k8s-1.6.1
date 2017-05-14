@@ -1,7 +1,7 @@
 ---
 # Join slave nodes to master
 - name: Run command from master to join slaves to cluster
-  command: for i in `cat /tmp/token.sh`;do ssh -o StrictHostKeyChecking=no root@"{{item}}" "$i --skip-preflight-checks";done
+  shell: for i in `cat /tmp/token.sh`;do ssh -o StrictHostKeyChecking=no root@"{{item}}" "$i --skip-preflight-checks";done
   with_items:
     - "{{kube_node1_ip}}"
     - "{{kube_node2_ip}}"
