@@ -7,8 +7,8 @@
 
 - name: simulate long running op, allow to run for 45 sec, fire and forget
   command: /bin/sleep 15
-    async: 45
-    poll: 0
+  async: 45
+  poll: 0
 
 - name: Check cluster status along with dashboard
   shell: kubectl --kubeconfig ./admin.conf get pods --all-namespaces -o wide
