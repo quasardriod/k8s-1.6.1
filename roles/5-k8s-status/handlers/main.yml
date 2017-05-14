@@ -1,9 +1,7 @@
 ---
 
 - name: Delete created files
-  file:
-    path: /tmp/"{{item}}"
-    state: absent
+  command: rm -rf /tmp/"{{item}}"
   with_items:
     - key_info
     - token.sh
