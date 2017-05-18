@@ -1,0 +1,13 @@
+---
+
+# You can increase the number of pods in your Deployment by applying a new YAML file.
+# This YAML file sets replicas to 4, which specifies that the Deployment should have four pods
+
+- name: Apply the new YAML file to scale replica set
+  command: kubectl apply -f http://k8s.io/docs/tutorials/stateless-application/deployment-scale.yaml
+
+- name: Verify that the Deployment has four pods
+  shell: kubectl get pods -l app=nginx
+  register: scale_pods
+- debug:
+    var: scale_pods.stdout

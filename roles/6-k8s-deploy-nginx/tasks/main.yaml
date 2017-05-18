@@ -1,0 +1,4 @@
+---
+- include: 1-create-nginx-deployment.yaml
+- include: 2-update-deployment.yaml
+- include: 3-scale-replica.yaml

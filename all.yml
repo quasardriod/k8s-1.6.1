@@ -5,49 +5,59 @@
 # if we change hostname first then sudo command takes time to execute. Reboot host in you changed hostname first
 
 # Setup hosts and k8s package installation
-- hosts: docker-cluster-servers
-  become: true
-  become_method: sudo
-  vars_files:
-    - group_vars/all
-  roles:
+
+#- hosts: docker-cluster-servers
+#  become: true
+#  become_method: sudo
+#  vars_files:
+#    - group_vars/all
+#  roles:
 #    - host-setup
-    - 1-k8s-common
+#     - 1-k8s-common
 
 # Initialize master
-- hosts: master
-  become: true
-  become_method: sudo
-  vars_files:
-    - group_vars/all
-  roles:
-    - 2-k8s-master
+#- hosts: master
+#  become: true
+#  become_method: sudo
+#  vars_files:
+#    - group_vars/all
+#  roles:
+#    - 2-k8s-master
 
 # Setup env for non-root user and install pod network
-- hosts: master
-  become: false
-  vars_files:
-    - group_vars/all
-  roles:
-    - 3-k8s-env-pod
+#- hosts: master
+#  become: false
+#  vars_files:
+#    - group_vars/all
+#  roles:
+#    - 3-k8s-env-pod
 
 # Join slaves in cluster
-- hosts: nodes
-  become: true
-  become_method: sudo
-  vars_files:
-    - group_vars/all
-  roles:
-    - 4-k8s-join-slaves
+#- hosts: nodes
+#  become: true
+#  become_method: sudo
+#  vars_files:
+#    - group_vars/all
+#  roles:
+#    - 4-k8s-join-slaves
 
 # check clsuter status
+#- hosts: master
+#  become: true
+#  become_method: sudo
+#  vars_files:
+#    - group_vars/all
+#  roles:
+#    - 5-k8s-status
+
+# deploy nginx app
 - hosts: master
   become: true
   become_method: sudo
   vars_files:
     - group_vars/all
   roles:
-    - 5-k8s-status
+    - 6-k8s-deploy-nginx
 
 # Optional: Copy kubeconfig to local system and use kubectl locally. Make sure kubectl pkg install in local system.
 # if not, this talk would install it.

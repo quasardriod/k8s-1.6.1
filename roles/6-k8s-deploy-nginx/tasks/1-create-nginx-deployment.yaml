@@ -1,0 +1,15 @@
+---
+- name: Creating and exploring an nginx deployment
+  command: kubectl create -f http://k8s.io/docs/tasks/run-application/deployment.yaml
+
+#- name: Display information about the Deployment:
+#  command: kubectl describe deployment nginx-deployment
+
+- name: List ngnix pods
+  shell: kubectl get pods -l app=nginx
+  register: list_nginx_pod
+- debug:
+    var: list_nginx_pod.stdout
+
+#- name: Display information about a pod
+#  command: kubectl describe pod <pod-name>
