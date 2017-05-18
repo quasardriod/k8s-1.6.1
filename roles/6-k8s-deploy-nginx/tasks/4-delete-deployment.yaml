@@ -1,4 +1,4 @@
 ---
 
 - name: Delete nginx-deployment
-  command: kubectl delete deployment nginx-deployment
+  command: kubectl --kubeconfig ./admin.conf delete deployment nginx-deployment

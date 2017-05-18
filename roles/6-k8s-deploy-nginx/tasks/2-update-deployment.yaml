@@ -4,10 +4,10 @@
 #This YAML file specifies that the deployment should be updated to use nginx 1.8.
 
 - name: Apply the yaml to update nginx app
-  command: kubectl apply -f http://k8s.io/docs/tutorials/stateless-application/deployment-update.yaml
+  command: kubectl --kubeconfig ./admin.conf apply -f http://k8s.io/docs/tutorials/stateless-application/deployment-update.yaml
 
 - name: Watch the deployment create pods with new names and delete the old pods
-  shell: kubectl get pods -l app=nginx
+  shell: kubectl --kubeconfig ./admin.conf get pods -l app=nginx
   register: watch_pods_update
 - debug:
     var: watch_pods_update.stdout
