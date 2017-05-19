@@ -14,3 +14,9 @@
 
 #- name: Display information about a pod
 #  command: kubectl describe pod <pod-name>
+
+- name: List deployment
+  shell: kubectl --kubeconfig ./admin.conf get deployments
+  register: list_deployment
+- debug:
+    var: list_deployment.stdout
