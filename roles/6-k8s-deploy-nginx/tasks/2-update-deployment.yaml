@@ -5,7 +5,8 @@
 
 - name: Apply the yaml to update nginx app
   command: kubectl --kubeconfig ./admin.conf apply -f http://k8s.io/docs/tutorials/stateless-application/deployment-update.yaml
-
+  async: 45
+  poll: 15
 - name: Watch the deployment create pods with new names and delete the old pods
   shell: kubectl --kubeconfig ./admin.conf get pods -l app=nginx
   register: watch_pods_update

@@ -5,7 +5,9 @@
 
 - name: Apply the new YAML file to scale replica set
   command: kubectl --kubeconfig ./admin.conf apply -f http://k8s.io/docs/tutorials/stateless-application/deployment-scale.yaml
-
+  async: 45
+  poll: 15
+  
 - name: Verify that the Deployment has four pods
   shell: kubectl --kubeconfig ./admin.conf get pods -l app=nginx
   register: scale_pods

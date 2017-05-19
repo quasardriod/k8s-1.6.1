@@ -1,8 +1,8 @@
 ---
 - name: Creating and exploring an nginx deployment
   command: kubectl --kubeconfig ./admin.conf create -f http://k8s.io/docs/tasks/run-application/deployment.yaml
-  
-
+  async: 30
+  poll: 15
 #- name: Display information about the Deployment:
 #  command: kubectl describe deployment nginx-deployment
 
