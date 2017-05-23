@@ -16,7 +16,7 @@
 #  shell: kubectl --kubeconfig ./admin.conf get pods -l app=nginx
 #  register: list_nginx_pod
 #- debug:
-    var: list_nginx_pod.stdout
+#    var: list_nginx_pod.stdout
 
 #- name: Display information about a pod
 #  command: kubectl describe pod <pod-name>
