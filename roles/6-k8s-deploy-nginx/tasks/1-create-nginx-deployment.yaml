@@ -1,28 +1,31 @@
 ---
 - name: Creating and exploring an nginx deployment
-  #command: kubectl --kubeconfig ./admin.conf create -f http://k8s.io/docs/tasks/run-application/deployment.yaml
-  kubernetes:
-    api_endpoint: "{{kube_endpoint}}"
-    url_username: "{{kube_api_username}}"
-    url_password: "{{kube_api_pass}}"
-    file_reference: deployment.yaml
-    state: present
+  command: kubectl --kubeconfig ./admin.conf create -f http://k8s.io/docs/tasks/run-application/deployment.yaml
+# reproted issue with kubernetes module in git
+#https://github.com/ansible/ansible-modules-extras/pull/2483
+#  kubernetes:
+#    api_endpoint: "{{kube_endpoint}}"
+#    url_username: "{{kube_api_username}}"
+#    url_password: "{{kube_api_pass}}"
+#    file_reference: deployment.yaml
+#    state: present
   async: 30
   poll: 15
-#- name: Display information about the Deployment:
-#  command: kubectl describe deployment nginx-deployment
 
-#- name: List ngnix pods
-#  shell: kubectl --kubeconfig ./admin.conf get pods -l app=nginx
-#  register: list_nginx_pod
-#- debug:
-#    var: list_nginx_pod.stdout
+- name: Display information about the Deployment:
+  command: kubectl describe deployment nginx-deployment
 
-#- name: Display information about a pod
-#  command: kubectl describe pod <pod-name>
+- name: List ngnix pods
+  shell: kubectl --kubeconfig ./admin.conf get pods -l app=nginx
+  register: list_nginx_pod
+- debug:
+    var: list_nginx_pod.stdout
 
-#- name: List deployment
-#  shell: kubectl --kubeconfig ./admin.conf get deployments
-#  register: list_deployment
-#- debug:
-#    var: list_deployment.stdout
+- name: Display information about a pod
+  command: kubectl describe pod <pod-name>
+
+- name: List deployment
+  shell: kubectl --kubeconfig ./admin.conf get deployments
+  register: list_deployment
+- debug:
+    var: list_deployment.stdout
