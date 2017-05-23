@@ -1,0 +1,5 @@
+---
+
+kube_endpoint: "{{kube_master_ip}}"
+kube_api_username: kubernetes-admin
+kube_api_pass: redacted

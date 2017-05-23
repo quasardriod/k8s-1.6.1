@@ -7,9 +7,9 @@ docker3   NotReady       2d
 
 lxc@docker1:~$ sudo kubectl get cs
 NAME                 STATUS    MESSAGE              ERROR
-scheduler            Healthy   ok                   
-controller-manager   Healthy   ok                   
-etcd-0               Healthy   {"health": "true"}   
+scheduler            Healthy   ok
+controller-manager   Healthy   ok
+etcd-0               Healthy   {"health": "true"}
 
 
 lxc@docker1:~$ sudo kubectl cluster-info
@@ -17,7 +17,7 @@ Kubernetes master is running at http://localhost:8080
 KubeDNS is running at http://localhost:8080/api/v1/proxy/namespaces/kube-system/services/kube-dns
 
 To further debug and diagnose cluster problems, use 'kubectl cluster-info dump'.
-lxc@docker1:~$ 
+lxc@docker1:~$
 
 
 lxc@docker1:~$ sudo kubectl get rc,services
@@ -52,17 +52,17 @@ current-context: ""
 kind: Config
 preferences: {}
 users: []
-lxc@docker1:~$ 
+lxc@docker1:~$
 
 lxc@docker1:~$ kubectl describe nodes docker2
 Name:			docker2
-Role:			
+Role:
 Labels:			beta.kubernetes.io/arch=amd64
 			beta.kubernetes.io/os=linux
 			kubernetes.io/hostname=docker2
 Taints:			<none>
 CreationTimestamp:	Mon, 27 Mar 2017 00:52:27 +0530
-Phase:			
+Phase:
 Conditions:
   Type			Status	LastHeartbeatTime			LastTransitionTime			Reason				Message
   ----			------	-----------------			------------------			------				-------
@@ -118,7 +118,7 @@ Events:
 
 
 # sudo kubectl create -f pod.yaml
-lxc@docker1:~/kubernates$ cat pod.yaml 
+lxc@docker1:~/kubernates$ cat pod.yaml
 apiVersion: v1
 kind: Pod
 metadata:
@@ -130,16 +130,139 @@ spec:
     args:
     - sleep
     - "1000000"
-lxc@docker1:~/kubernates$ 
+lxc@docker1:~/kubernates$
 
 # kubectl describe pod busybox-sleep
 kubectl exec $POD_NAME env kubernetes-bootcamp-390780338-687hz
-  157  kubectl exec $POD_NAME env 
-  158  kubectl exec busybox-sleep env 
+  157  kubectl exec $POD_NAME env
+  158  kubectl exec busybox-sleep env
   159  kubectl exec -ti  busybox-sleep env /bin/bash
   160  kubectl get pods
 
-
-
-
-
+----------------------------
+Describe system pods
+stack@kube-master:~$ kubectl describe pods/kube-dns-3913472980-l1p84 --namespace=kube-system
+Name:		kube-dns-3913472980-l1p84
+Namespace:	kube-system
+Node:		kube-node2/192.168.2.113
+Start Time:	Sun, 14 May 2017 13:06:00 +0530
+Labels:		k8s-app=kube-dns
+		pod-template-hash=3913472980
+Annotations:	kubernetes.io/created-by={"kind":"SerializedReference","apiVersion":"v1","reference":{"kind":"ReplicaSet","namespace":"kube-system","name":"kube-dns-3913472980","uid":"d4279f69-3877-11e7-b2be-5254005b...
+		scheduler.alpha.kubernetes.io/critical-pod=
+Status:		Running
+IP:		10.46.0.1
+Controllers:	ReplicaSet/kube-dns-3913472980
+Containers:
+  kubedns:
+    Container ID:	docker://8734e1cad0a701036e990e7d8adccd5ca18be015a4c1ca623c2846e371845b62
+    Image:		gcr.io/google_containers/k8s-dns-kube-dns-amd64:1.14.1
+    Image ID:		docker-pullable://gcr.io/google_containers/k8s-dns-kube-dns-amd64@sha256:33914315e600dfb756e550828307dfa2b21fb6db24fe3fe495e33d1022f9245d
+    Ports:		10053/UDP, 10053/TCP, 10055/TCP
+    Args:
+      --domain=cluster.local.
+      --dns-port=10053
+      --config-dir=/kube-dns-config
+      --v=2
+    State:		Running
+      Started:		Thu, 18 May 2017 17:16:10 +0530
+    Last State:		Terminated
+      Reason:		Completed
+      Exit Code:	0
+      Started:		Mon, 01 Jan 0001 00:00:00 +0000
+      Finished:		Thu, 18 May 2017 10:30:21 +0530
+    Ready:		True
+    Restart Count:	1
+    Limits:
+      memory:	170Mi
+    Requests:
+      cpu:	100m
+      memory:	70Mi
+    Liveness:	http-get http://:10054/healthcheck/kubedns delay=60s timeout=5s period=10s #success=1 #failure=5
+    Readiness:	http-get http://:8081/readiness delay=3s timeout=5s period=10s #success=1 #failure=3
+    Environment:
+      PROMETHEUS_PORT:	10055
+    Mounts:
+      /kube-dns-config from kube-dns-config (rw)
+      /var/run/secrets/kubernetes.io/serviceaccount from kube-dns-token-21dgk (ro)
+  dnsmasq:
+    Container ID:	docker://aec641dc8d8dca0c9e68b2fc630be2219976455b91c58f43dafc98cd94904c74
+    Image:		gcr.io/google_containers/k8s-dns-dnsmasq-nanny-amd64:1.14.1
+    Image ID:		docker-pullable://gcr.io/google_containers/k8s-dns-dnsmasq-nanny-amd64@sha256:89c9a1d3cfbf370a9c1a949f39f92c1dc2dbe8c3e6cc1802b7f2b48e4dfe9a9e
+    Ports:		53/UDP, 53/TCP
+    Args:
+      -v=2
+      -logtostderr
+      -configDir=/etc/k8s/dns/dnsmasq-nanny
+      -restartDnsmasq=true
+      --
+      -k
+      --cache-size=1000
+      --log-facility=-
+      --server=/cluster.local/127.0.0.1#10053
+      --server=/in-addr.arpa/127.0.0.1#10053
+      --server=/ip6.arpa/127.0.0.1#10053
+    State:		Running
+      Started:		Thu, 18 May 2017 17:16:10 +0530
+    Last State:		Terminated
+      Reason:		Completed
+      Exit Code:	0
+      Started:		Mon, 01 Jan 0001 00:00:00 +0000
+      Finished:		Thu, 18 May 2017 10:30:21 +0530
+    Ready:		True
+    Restart Count:	1
+    Requests:
+      cpu:		150m
+      memory:		20Mi
+    Liveness:		http-get http://:10054/healthcheck/dnsmasq delay=60s timeout=5s period=10s #success=1 #failure=5
+    Environment:	<none>
+    Mounts:
+      /etc/k8s/dns/dnsmasq-nanny from kube-dns-config (rw)
+      /var/run/secrets/kubernetes.io/serviceaccount from kube-dns-token-21dgk (ro)
+  sidecar:
+    Container ID:	docker://84aa7642242fa0600afacd9d04e1f87cd1b3c0f56b7d9b4271667710c8209a72
+    Image:		gcr.io/google_containers/k8s-dns-sidecar-amd64:1.14.1
+    Image ID:		docker-pullable://gcr.io/google_containers/k8s-dns-sidecar-amd64@sha256:d33a91a5d65c223f410891001cd379ac734d036429e033865d700a4176e944b0
+    Port:		10054/TCP
+    Args:
+      --v=2
+      --logtostderr
+      --probe=kubedns,127.0.0.1:10053,kubernetes.default.svc.cluster.local,5,A
+      --probe=dnsmasq,127.0.0.1:53,kubernetes.default.svc.cluster.local,5,A
+    State:		Running
+      Started:		Thu, 18 May 2017 17:16:11 +0530
+    Last State:		Terminated
+      Reason:		Completed
+      Exit Code:	0
+      Started:		Mon, 01 Jan 0001 00:00:00 +0000
+      Finished:		Thu, 18 May 2017 10:30:12 +0530
+    Ready:		True
+    Restart Count:	1
+    Requests:
+      cpu:		10m
+      memory:		20Mi
+    Liveness:		http-get http://:10054/metrics delay=60s timeout=5s period=10s #success=1 #failure=5
+    Environment:	<none>
+    Mounts:
+      /var/run/secrets/kubernetes.io/serviceaccount from kube-dns-token-21dgk (ro)
+Conditions:
+  Type		Status
+  Initialized 	True
+  Ready 	True
+  PodScheduled 	True
+Volumes:
+  kube-dns-config:
+    Type:	ConfigMap (a volume populated by a ConfigMap)
+    Name:	kube-dns
+    Optional:	true
+  kube-dns-token-21dgk:
+    Type:	Secret (a volume populated by a Secret)
+    SecretName:	kube-dns-token-21dgk
+    Optional:	false
+QoS Class:	Burstable
+Node-Selectors:	<none>
+Tolerations:	CriticalAddonsOnly=:Exists
+		node-role.kubernetes.io/master=:NoSchedule
+		node.alpha.kubernetes.io/notReady=:Exists:NoExecute for 300s
+		node.alpha.kubernetes.io/unreachable=:Exists:NoExecute for 300s
+Events:		<none>

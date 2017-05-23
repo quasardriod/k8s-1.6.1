@@ -1,0 +1,61 @@
+Tested in node1 (192.168.2.112)
+--------------------------------------
+
+1)----------------------------
+All system internal container (in pods)
+CONTAINER ID        IMAGE                                                                                                               COMMAND                  CREATED             STATUS              PORTS               NAMES
+e14143c4e16f        weaveworks/weave-npc@sha256:182ccae504a5faae0fbe65f42a0a9f45eaa4923b313a43da2652b28348821694                        "/usr/bin/weave-npc"     15 hours ago        Up 15 hours                             k8s_weave-npc_weave-net-rv4fn_kube-system_d5ba3eb5-3877-11e7-b2be-5254005ba450_1
+0975e61bee09        gcr.io/google_containers/kube-proxy-amd64@sha256:d91cd43993437515ad36e0b2c52ad8595c5c1591e664605c14708fd4c74f6222   "/usr/local/bin/kube-"   15 hours ago        Up 15 hours                             k8s_kube-proxy_kube-proxy-3b2ts_kube-system_d5ba515f-3877-11e7-b2be-5254005ba450_1
+861d0b1ca3c3        weaveworks/weave-kube@sha256:8db0db57ee3c03224f63171b020bbdb50bd2bde6409780543ed9100765b164ed                       "/home/weave/launch.s"   15 hours ago        Up 15 hours                             k8s_weave_weave-net-rv4fn_kube-system_d5ba3eb5-3877-11e7-b2be-5254005ba450_1
+b2fb97ca3144        gcr.io/google_containers/pause-amd64:3.0                                                                            "/pause"                 15 hours ago        Up 15 hours                             k8s_POD_kube-proxy-3b2ts_kube-system_d5ba515f-3877-11e7-b2be-5254005ba450_1
+418a5d58810c        gcr.io/google_containers/pause-amd64:3.0                                                                            "/pause"                 15 hours ago        Up 15 hours                             k8s_POD_weave-net-rv4fn_kube-system_d5ba3eb5-3877-11e7-b2be-5254005ba450_1
+
+Hence no app container, weave network has no interface
+
+[root@rhel7-host ~]# ssh 192.168.2.112 -l stack "brctl show"
+bridge name	bridge id		STP enabled	interfaces
+docker0		8000.02429804a337	no
+weave		8000.4ed45ca3f9f1	no		vethwe-bridge
+
+2)-----------------------------------------
+
+Deployed 2 nginx pods in node1
+nginx-deployment-3285060500-3x9dn   1/1       Running   0          6m        10.32.0.2   kube-node1
+nginx-deployment-3285060500-cf2rm   1/1       Running   0          7m        10.32.0.3   kube-node1
+
+- We can see here 4 additional container got created. each container as one gcr.io/google_containers (image) associated container.
+- google_container image creates one container k8s_POD_<app or deployment reference name>
+- This same methodology is applicable for system pods and containers also
+- Since I deployed nginx pods using "deployment" method, we can see deployment name "nginx-deployment" in container full name k8s_nginx_nginx-deployment-3285060500_xxxxxxxxx.
+
+321d2e49c97c  nginx@sha256:c97ee70c4048fe79765f7c2ec0931957c2898f47400128f4f3640d0ae5d60d10   k8s_nginx_nginx-deployment-3285060500-3x9dn_default_4e3d7ff8-3c45-11e7-bd33-5254005ba450_0
+f4bf1954e7a9  gcr.io/google_containers/pause-amd64:3.0                                        k8s_POD_nginx-deployment-3285060500-3x9dn_default_4e3d7ff8-3c45-11e7-bd33-5254005ba450_0
+c63daab90fb7  nginx@sha256:c97ee70c4048fe79765f7c2ec0931957c2898f47400128f4f3640d0ae5d60d10   k8s_nginx_nginx-deployment-3285060500-cf2rm_default_4446d7de-3c45-11e7-bd33-5254005ba450_0
+8a848a009110  gcr.io/google_containers/pause-amd64:3.0                                        k8s_POD_nginx-deployment-3285060500-cf2rm_default_4446d7de-3c45-11e7-bd33-5254005ba450_0
+
+
+
+CONTAINER ID        IMAGE                                                                                                               COMMAND                  CREATED             STATUS              PORTS               NAMES
+321d2e49c97c        nginx@sha256:c97ee70c4048fe79765f7c2ec0931957c2898f47400128f4f3640d0ae5d60d10                                       "nginx -g 'daemon off"   35 seconds ago      Up 34 seconds                           k8s_nginx_nginx-deployment-3285060500-3x9dn_default_4e3d7ff8-3c45-11e7-bd33-5254005ba450_0
+f4bf1954e7a9        gcr.io/google_containers/pause-amd64:3.0                                                                            "/pause"                 36 seconds ago      Up 34 seconds                           k8s_POD_nginx-deployment-3285060500-3x9dn_default_4e3d7ff8-3c45-11e7-bd33-5254005ba450_0
+c63daab90fb7        nginx@sha256:c97ee70c4048fe79765f7c2ec0931957c2898f47400128f4f3640d0ae5d60d10                                       "nginx -g 'daemon off"   52 seconds ago      Up 51 seconds                           k8s_nginx_nginx-deployment-3285060500-cf2rm_default_4446d7de-3c45-11e7-bd33-5254005ba450_0
+8a848a009110        gcr.io/google_containers/pause-amd64:3.0                                                                            "/pause"                 53 seconds ago      Up 52 seconds                           k8s_POD_nginx-deployment-3285060500-cf2rm_default_4446d7de-3c45-11e7-bd33-5254005ba450_0
+
+e14143c4e16f        weaveworks/weave-npc@sha256:182ccae504a5faae0fbe65f42a0a9f45eaa4923b313a43da2652b28348821694                        "/usr/bin/weave-npc"     15 hours ago        Up 15 hours                             k8s_weave-npc_weave-net-rv4fn_kube-system_d5ba3eb5-3877-11e7-b2be-5254005ba450_1
+0975e61bee09        gcr.io/google_containers/kube-proxy-amd64@sha256:d91cd43993437515ad36e0b2c52ad8595c5c1591e664605c14708fd4c74f6222   "/usr/local/bin/kube-"   15 hours ago        Up 15 hours                             k8s_kube-proxy_kube-proxy-3b2ts_kube-system_d5ba515f-3877-11e7-b2be-5254005ba450_1
+861d0b1ca3c3        weaveworks/weave-kube@sha256:8db0db57ee3c03224f63171b020bbdb50bd2bde6409780543ed9100765b164ed                       "/home/weave/launch.s"   15 hours ago        Up 15 hours                             k8s_weave_weave-net-rv4fn_kube-system_d5ba3eb5-3877-11e7-b2be-5254005ba450_1
+b2fb97ca3144        gcr.io/google_containers/pause-amd64:3.0                                                                            "/pause"                 15 hours ago        Up 15 hours                             k8s_POD_kube-proxy-3b2ts_kube-system_d5ba515f-3877-11e7-b2be-5254005ba450_1
+418a5d58810c        gcr.io/google_containers/pause-amd64:3.0                                                                            "/pause"                 15 hours ago        Up 15 hours                             k8s_POD_weave-net-rv4fn_kube-system_d5ba3eb5-3877-11e7-b2be-5254005ba450_1
+
+
+3) ---------------------------------------------------
+
+If we see interface created below have name "vethwepl<first 7 caracters of container id>"
+This container id is of container created with "google_containers" image for referenced app(container).
+T
+[root@rhel7-host ~]# ssh 192.168.2.112 -l stack "brctl show"
+bridge name	bridge id		STP enabled	interfaces
+docker0		8000.02429804a337	no
+weave		8000.4ed45ca3f9f1	no		vethwe-bridge
+							                  vethwepl8a848a0
+							                  vethweplf4bf195
